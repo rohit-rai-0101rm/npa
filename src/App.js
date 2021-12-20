@@ -1,58 +1,51 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
-
-function App() {
+import React, { useState, useEffect } from 'react';
+import {
+  Switch,
+  BrowserRouter as Router,
+  Route,
+  Redirect,
+} from 'react-router-dom';
+import Spinner from 'react-bootstrap/Spinner';
+import { UserContext } from './context/userContext';
+import { checkUser } from './service/magic';
+import Authenticate from './components/Authenticate';
+import Dashboard from './components/DashBoard';
+import PrivateRoute from './components/PrivateRoute';
+const App = () => {
+  const [user, setUser] = useState({ isLoggedIn: null, email: '' });
+  const [loading, setLoading] = useState();
+  useEffect(() => {
+    const validateUser = async () => {
+      setLoading(true);
+      try {
+        await checkUser(setUser);
+        setLoading(false);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    validateUser();
+  }, [user.isLoggedIn]);
+  if (loading) {
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: '100vh' }}
+      >
+        <Spinner animation="border" />
+      </div>
+    );
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
-    </div>
+    <UserContext.Provider value={user}>
+      <Router>
+        {user.isLoggedIn && <Redirect to={{ pathname: '/dashboard' }} />}
+        <Switch>
+          <Route exact path="/" component={Authenticate} />
+          <PrivateRoute path="/dashboard" component={Dashboard} />
+        </Switch>
+      </Router>
+    </UserContext.Provider>
   );
-}
-
+};
 export default App;
