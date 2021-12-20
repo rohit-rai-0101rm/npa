@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from "react-redux";
+import {  setUser } from "../features/User/userSlice";
 import { useHistory } from 'react-router-dom';
 import {
   Button,
@@ -9,6 +11,7 @@ import {
 } from 'react-bootstrap';
 import { loginUser } from '../service/magic';
 const Authenticate = () => {
+    const dispatch=useDispatch()
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState('');
   const [error, setError] = useState(null);
@@ -25,7 +28,9 @@ const Authenticate = () => {
       await loginUser(email);
       setLoading(false);
       history.replace('/dashboard');
-    } catch (error) {
+      console.log(email)
+      dispatch(setUser(email))
+ } catch (error) {
       setError('Unable to log in');
       console.error(error);
     }

@@ -10,6 +10,7 @@ import { UserContext } from './context/userContext';
 import { checkUser } from './service/magic';
 import Authenticate from './components/Authenticate';
 import Dashboard from './components/DashBoard';
+import Check from './components/Check'
 import PrivateRoute from './components/PrivateRoute';
 const App = () => {
   const [user, setUser] = useState({ isLoggedIn: null, email: '' });
@@ -42,7 +43,9 @@ const App = () => {
         {user.isLoggedIn && <Redirect to={{ pathname: '/dashboard' }} />}
         <Switch>
           <Route exact path="/" component={Authenticate} />
-          <PrivateRoute path="/dashboard" component={Dashboard} />
+          <Route path="/dashboard" component={Dashboard} />
+          <Route path="/check" component={Check} />
+
         </Switch>
       </Router>
     </UserContext.Provider>

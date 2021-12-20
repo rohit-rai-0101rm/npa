@@ -1,15 +1,21 @@
-import React, { useContext } from 'react';
-import { useHistory } from 'react-router-dom';
-import Button from 'react-bootstrap/Button';
-import { UserContext } from '../context/userContext';
-import { logoutUser } from '../service/magic';
+import React from "react";
+import { useHistory } from "react-router-dom";
+import Button from "react-bootstrap/Button";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../features/User/userSlice";
+import { logoutUser } from "../service/magic";
+import { selectUser } from "../features/User/userSlice";
 const Dashboard = () => {
-  const { email } = useContext(UserContext);
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser);
+  console.log(user);
+
   const history = useHistory();
   const handleLogOut = async () => {
     try {
       await logoutUser();
-      history.replace('/');
+      history.replace("/");
+      dispatch(logout());
     } catch (error) {
       console.error(error);
     }
@@ -21,7 +27,11 @@ const Dashboard = () => {
           Sign Out
         </Button>
       </div>
-      <h1 className="h1">User: {email}</h1>
+      {
+          user? <h1 className="h1">User: {user.user}</h1>:
+
+          <h1 className="h1">fuck off</h1>
+        }
     </div>
   );
 };

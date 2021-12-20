@@ -1,13 +1,16 @@
 import React, { useContext } from 'react';
 import { Redirect, Route } from 'react-router-dom';
-import { UserContext } from '../context/userContext';
+import { useDispatch, useSelector } from "react-redux";
+import { selectUser } from "../features/User/userSlice";
+
 const PrivateRoute = ({ component: Component, ...rest }) => {
-  const { isLoggedIn } = useContext(UserContext);
+    const user=useSelector(selectUser)
+    console.log(user)
   return (
     <Route
       {...rest}
       render={(props) =>
-        isLoggedIn ? <Component {...props} /> : <Redirect to="/" />
+        user ? <Component {...props} /> : <Redirect to="/" />
       }
     />
   );
